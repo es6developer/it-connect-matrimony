@@ -49,7 +49,7 @@ import { AdminModule } from './modules/admin/admin.module';
         database: config.get<string>('database.database'),
         namingStrategy: new SnakeNamingStrategy(),
         entities: [__dirname + '/**/*.entity{.ts,.js}'],
-        synchronize: false,
+        synchronize: config.get<boolean>('database.synchronize', true),
         logging: false,
         autoLoadEntities: true,
         retryAttempts: 3,

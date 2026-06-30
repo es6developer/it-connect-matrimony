@@ -6,4 +6,5 @@ export default registerAs('database', () => ({
   username: process.env.DB_USERNAME || 'root',
   password: process.env.DB_PASSWORD !== undefined ? process.env.DB_PASSWORD : '',
   database: process.env.DB_DATABASE || 'it_connect_matrimony',
+  synchronize: process.env.DB_SYNCHRONIZE !== 'false',
 }));
