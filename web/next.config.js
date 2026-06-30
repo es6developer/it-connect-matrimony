@@ -14,18 +14,20 @@ const nextConfig = {
   },
 
   async rewrites() {
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://it-connect-matrimony.onrender.com';
+    const wsUrl = process.env.NEXT_PUBLIC_WS_URL || 'https://it-connect-matrimony.onrender.com';
     return [
       {
         source: "/api/:path*",
-        destination: `${process.env.NEXT_PUBLIC_API_URL}/api/:path*`,
+        destination: `${apiUrl}/api/:path*`,
       },
       {
         source: "/socket.io/:path*",
-        destination: `${process.env.NEXT_PUBLIC_WS_URL}/socket.io/:path*`,
+        destination: `${wsUrl}/socket.io/:path*`,
       },
       {
         source: "/uploads/:path*",
-        destination: `${process.env.NEXT_PUBLIC_API_URL}/uploads/:path*`,
+        destination: `${apiUrl}/uploads/:path*`,
       },
     ];
   },
@@ -52,7 +54,7 @@ const nextConfig = {
       {
         source: "/api/:path*",
         headers: [
-          { key: "Access-Control-Allow-Origin", value: process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000" },
+          { key: "Access-Control-Allow-Origin", value: process.env.NEXT_PUBLIC_APP_URL || "https://it-connect-matrimony.onrender.com" },
           { key: "Access-Control-Allow-Methods", value: "GET, POST, PUT, DELETE, PATCH, OPTIONS" },
           { key: "Access-Control-Allow-Headers", value: "Content-Type, Authorization" },
         ],
