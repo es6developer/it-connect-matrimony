@@ -65,7 +65,7 @@ const clearAuth = () => {
 };
 
 const api = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL || 'https://it-connect-matrimony.onrender.com',
+  baseURL: '',
   timeout: 30000,
   headers: {
     "Content-Type": "application/json",
