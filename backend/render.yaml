@@ -15,7 +15,7 @@ services:
       - key: API_PREFIX
         value: api/v1
       - key: CORS_ORIGINS
-        value: https://your-frontend-url.onrender.com
+        value: https://it-connect-matrimony.onrender.com
       - key: DB_HOST
         sync: false
       - key: DB_PORT

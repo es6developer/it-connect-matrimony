@@ -1,10 +1,10 @@
 export const API_URL = __DEV__
   ? 'http://localhost:4000/api/v1'
-  : 'https://api.itconnectmatrimony.com/api/v1';
+  : 'https://it-connect-matrimony.onrender.com/api/v1';
 
 export const SOCKET_URL = __DEV__
   ? 'http://localhost:4000'
-  : 'https://api.itconnectmatrimony.com';
+  : 'https://it-connect-matrimony.onrender.com';
 
 export const STORAGE_KEYS = {
   ACCESS_TOKEN: 'access_token',
