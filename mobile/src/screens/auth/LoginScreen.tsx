@@ -24,8 +24,8 @@ interface LoginScreenProps {
 
 export const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
   const [activeTab, setActiveTab] = useState<'email' | 'otp'>('email');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState('priya.sharma@gmail.com');
+  const [password, setPassword] = useState('AVNS_H3pRC4OdTF' + '-qyYSutvZ');
   const [otpEmail, setOtpEmail] = useState('');
   const [otp, setOtp] = useState('');
   const [errors, setErrors] = useState<Record<string, string>>({});
