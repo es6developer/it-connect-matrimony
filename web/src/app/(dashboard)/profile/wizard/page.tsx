@@ -81,7 +81,7 @@ export default function ProfileWizardPage() {
     bio: "",
   });
 
-  const [photos, setPhotos] = useState<string[]>([]);
+  const [photos] = useState<string[]>([]);
   const [techInput, setTechInput] = useState("");
   const [skillInput, setSkillInput] = useState("");
   const [hobbyInput, setHobbyInput] = useState("");
