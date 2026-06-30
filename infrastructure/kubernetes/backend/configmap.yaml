@@ -1,0 +1,27 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: backend-config
+  namespace: it-connect
+  labels:
+    app: backend
+    component: api
+data:
+  NODE_ENV: "production"
+  PORT: "4000"
+  DB_HOST: "mysql"
+  DB_PORT: "3306"
+  DB_DATABASE: "it_connect"
+  REDIS_HOST: "redis"
+  REDIS_PORT: "6379"
+  ELASTICSEARCH_NODE: "http://elasticsearch:9200"
+  RABBITMQ_HOST: "rabbitmq"
+  RABBITMQ_PORT: "5672"
+  RABBITMQ_VHOST: "/"
+  JWT_EXPIRATION: "3600"
+  AWS_REGION: "us-east-1"
+  LOG_LEVEL: "info"
+  CORS_ORIGINS: "https://itconnectmatrimony.com,https://admin.itconnectmatrimony.com"
+  RATE_LIMIT_TTL: "60"
+  RATE_LIMIT_MAX: "100"
+  UPLOAD_MAX_FILE_SIZE: "52428800"

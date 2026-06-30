@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: it-connect
+  labels:
+    name: it-connect
+    environment: production
+    app.kubernetes.io/name: it-connect-matrimony
+    app.kubernetes.io/part-of: it-connect

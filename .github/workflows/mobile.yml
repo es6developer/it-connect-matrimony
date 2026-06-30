@@ -1,0 +1,152 @@
+name: Mobile CI/CD
+
+on:
+  push:
+    branches: [main, develop]
+    paths:
+      - "packages/mobile/**"
+      - ".github/workflows/mobile.yml"
+  pull_request:
+    branches: [main]
+    paths:
+      - "packages/mobile/**"
+
+env:
+  NODE_VERSION: "20"
+  EXPO_VERSION: "latest"
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run ESLint
+        run: npm run lint --workspace=packages/mobile
+
+      - name: Check formatting
+        run: npx prettier --check "packages/mobile/**/*.{ts,tsx,js,jsx}"
+
+  test:
+    name: Test
+    needs: lint
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run unit tests
+        run: npm run test --workspace=packages/mobile
+
+      - name: Upload coverage reports
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-mobile
+          path: packages/mobile/coverage/
+          retention-days: 7
+
+  build:
+    name: Build (EAS)
+    needs: test
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: "npm"
+
+      - name: Setup Expo
+        uses: expo/expo-github-action@v8
+        with:
+          expo-version: ${{ env.EXPO_VERSION }}
+          eas-version: latest
+          token: ${{ secrets.EXPO_TOKEN }}
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Create .env file
+        run: |
+          echo "API_URL=${{ secrets.MOBILE_API_URL }}" >> packages/mobile/.env
+          echo "WS_URL=${{ secrets.MOBILE_WS_URL }}" >> packages/mobile/.env
+          echo "SENTRY_DSN=${{ secrets.MOBILE_SENTRY_DSN }}" >> packages/mobile/.env
+
+      - name: Build Android
+        if: github.ref == 'refs/heads/main'
+        run: |
+          cd packages/mobile
+          eas build --platform android --profile production --non-interactive
+
+      - name: Build iOS
+        if: github.ref == 'refs/heads/main'
+        run: |
+          cd packages/mobile
+          eas build --platform ios --profile production --non-interactive
+
+  submit:
+    name: EAS Submit
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Setup Expo
+        uses: expo/expo-github-action@v8
+        with:
+          eas-version: latest
+          token: ${{ secrets.EXPO_TOKEN }}
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Submit to Google Play
+        run: |
+          cd packages/mobile
+          eas submit --platform android --profile production --non-interactive
+
+      - name: Submit to App Store
+        run: |
+          cd packages/mobile
+          eas submit --platform ios --profile production --non-interactive

@@ -1,0 +1,93 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mysql
+  namespace: it-connect
+  labels:
+    app: mysql
+    component: database
+spec:
+  serviceName: mysql
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mysql
+  template:
+    metadata:
+      labels:
+        app: mysql
+        component: database
+    spec:
+      terminationGracePeriodSeconds: 60
+      containers:
+        - name: mysql
+          image: mysql:8.0
+          ports:
+            - containerPort: 3306
+              name: mysql
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mysql-secrets
+                  key: root_password
+            - name: MYSQL_DATABASE
+              value: "it_connect"
+            - name: MYSQL_USER
+              value: "itconnect"
+            - name: MYSQL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mysql-secrets
+                  key: user_password
+            - name: MYSQL_CHARACTER_SET_SERVER
+              value: "utf8mb4"
+            - name: MYSQL_COLLATION_SERVER
+              value: "utf8mb4_unicode_ci"
+          resources:
+            requests:
+              memory: "1Gi"
+              cpu: "500m"
+            limits:
+              memory: "2Gi"
+              cpu: "1000m"
+          livenessProbe:
+            exec:
+              command: ["mysqladmin", "ping", "-u", "root", "-p${MYSQL_ROOT_PASSWORD}"]
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+          readinessProbe:
+            exec:
+              command: ["mysqladmin", "ping", "-u", "root", "-p${MYSQL_ROOT_PASSWORD}"]
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            timeoutSeconds: 3
+            failureThreshold: 5
+          volumeMounts:
+            - name: mysql-data
+              mountPath: /var/lib/mysql
+            - name: mysql-config
+              mountPath: /etc/mysql/conf.d
+          securityContext:
+            allowPrivilegeEscalation: false
+            runAsUser: 999
+            runAsGroup: 999
+            capabilities:
+              drop: ["ALL"]
+      volumes:
+        - name: mysql-config
+          configMap:
+            name: mysql-config
+  volumeClaimTemplates:
+    - metadata:
+        name: mysql-data
+        labels:
+          app: mysql
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        storageClassName: gp3
+        resources:
+          requests:
+            storage: 50Gi

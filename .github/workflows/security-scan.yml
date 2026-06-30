@@ -1,0 +1,172 @@
+name: Weekly Security Scan
+
+on:
+  schedule:
+    - cron: "0 6 * * 0"
+  workflow_dispatch:
+
+env:
+  AWS_REGION: us-east-1
+  NODE_VERSION: "20"
+
+jobs:
+  trivy-scan:
+    name: Trivy Container Scan
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: read
+      security-events: write
+
+    strategy:
+      matrix:
+        service: [backend, web, admin]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: ${{ steps.login-ecr.outputs.registry }}/it-connect-${{ matrix.service }}:latest
+          format: sarif
+          output: trivy-results-${{ matrix.service }}.sarif
+          severity: CRITICAL,HIGH
+          exit-code: 0
+          vuln-type: os,library
+          scanners: vuln,secret
+
+      - name: Upload Trivy results to GitHub Security
+        uses: github/codeql-action/upload-sarif@v3
+        if: always()
+        with:
+          sarif_file: trivy-results-${{ matrix.service }}.sarif
+          category: ${{ matrix.service }}
+
+  dependency-audit:
+    name: Dependency Audit
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run npm audit
+        run: npm audit --audit-level=high
+        continue-on-error: true
+
+      - name: Run Snyk security scan
+        uses: snyk/actions/node@master
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          args: --severity-threshold=high
+        continue-on-error: true
+
+      - name: Generate dependency report
+        run: |
+          echo "## Dependency Audit Report" > dependency-report.md
+          echo "### Date: $(date -u)" >> dependency-report.md
+          echo "" >> dependency-report.md
+          npm audit --json 2>/dev/null | jq -r '
+            if .vulnerabilities then
+              "| Package | Severity | CVEs |\n|---------|----------|------|\n" +
+              ([.vulnerabilities | to_entries[] | 
+                select(.value.severity == "high" or .value.severity == "critical") |
+                "| \(.key) | \(.value.severity) | \(.value.via | map(select(.cve or .cwe)) | length) |"
+              ] | join("\n"))
+            else
+              "No vulnerabilities found"
+            end
+          ' 2>/dev/null >> dependency-report.md || echo "No vulnerabilities found" >> dependency-report.md
+
+      - name: Upload dependency report
+        uses: actions/upload-artifact@v4
+        with:
+          name: dependency-audit-report
+          path: dependency-report.md
+          retention-days: 30
+
+  license-compliance:
+    name: License Compliance
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Check licenses
+        run: |
+          npx license-checker \
+            --excludePackages "MIT;Apache-2.0;ISC;BSD-2-Clause;BSD-3-Clause;CC0-1.0;Unlicense" \
+            --onlyAllow "MIT;Apache-2.0;ISC;BSD-2-Clause;BSD-3-Clause;CC0-1.0;Unlicense" \
+            --failOn "GPL;AGPL;LGPL" \
+            --summary
+
+  secret-scanning:
+    name: Secret Scanning
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Run GitLeaks
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Run TruffleHog
+        uses: trufflesecurity/trufflehog@main
+        with:
+          extra_args: --only-verified
+
+  notification:
+    name: Notification
+    needs: [trivy-scan, dependency-audit, license-compliance, secret-scanning]
+    runs-on: ubuntu-latest
+    if: always()
+    steps:
+      - name: Send Slack notification
+        uses: rtCamp/action-slack-notify@v2
+        env:
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+          SLACK_CHANNEL: security-alerts
+          SLACK_COLOR: ${{ job.status }}
+          SLACK_TITLE: Weekly Security Scan Results
+          SLACK_MESSAGE: |
+            Trivy: ${{ needs.trivy-scan.result }}
+            Dependency: ${{ needs.dependency-audit.result }}
+            License: ${{ needs.license-compliance.result }}
+            Secrets: ${{ needs.secret-scanning.result }}
+          MSG_MINIMAL: true

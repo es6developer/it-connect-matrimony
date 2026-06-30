@@ -1,0 +1,15 @@
+node_modules/
+dist/
+.next/
+.env
+.env.local
+.env.*.local
+*.log
+uploads/
+.DS_Store
+coverage/
+*.tsbuildinfo
+*.keystore
+mobile/.expo/
+.expo/
+

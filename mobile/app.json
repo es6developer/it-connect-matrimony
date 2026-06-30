@@ -1,0 +1,70 @@
+{
+  "expo": {
+    "name": "IT Connect Matrimony",
+    "slug": "it-connect-matrimony",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/logo.png",
+    "userInterfaceStyle": "light",
+    "scheme": "it-connect-matrimony",
+      "splash": {
+        "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#0D1B3E"
+    },
+    "assetBundlePatterns": ["**/*"],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.itconnect.matrimony",
+      "infoPlist": {
+        "NSCameraUsageDescription": "Allow IT Connect Matrimony to access your camera for profile photos.",
+        "NSPhotoLibraryUsageDescription": "Allow IT Connect Matrimony to access your photo library for profile photos.",
+        "NSNotificationsUsageDescription": "Allow IT Connect Matrimony to send you match recommendations and messages."
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/logo.png",
+        "backgroundColor": "#0D1B3E"
+      },
+      "package": "com.itconnect.matrimony",
+      "permissions": [
+        "CAMERA",
+        "READ_EXTERNAL_STORAGE",
+        "WRITE_EXTERNAL_STORAGE",
+        "POST_NOTIFICATIONS"
+      ]
+    },
+    "plugins": [
+      "expo-router",
+      "expo-secure-store",
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Allow IT Connect Matrimony to access your camera."
+        }
+      ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Allow IT Connect Matrimony to access your photos."
+        }
+      ],
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/notification-icon.png",
+          "color": "#42A5F5"
+        }
+      ]
+    ],
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "it-connect-matrimony"
+      }
+    }
+  }
+}

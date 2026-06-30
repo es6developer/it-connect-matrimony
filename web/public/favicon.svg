@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0D1B3E"/>
+      <stop offset="100%" style="stop-color:#1A2744"/>
+    </linearGradient>
+    <linearGradient id="blueGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#2196F3"/>
+      <stop offset="100%" style="stop-color:#0D47A1"/>
+    </linearGradient>
+    <linearGradient id="orangeGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#FFA726"/>
+      <stop offset="100%" style="stop-color:#E65100"/>
+    </linearGradient>
+    <linearGradient id="heartBlueGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#42A5F5"/>
+      <stop offset="100%" style="stop-color:#1565C0"/>
+    </linearGradient>
+    <linearGradient id="heartOrangeGrad" x1="100%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#FFB74D"/>
+      <stop offset="100%" style="stop-color:#EF6C00"/>
+    </linearGradient>
+    <clipPath id="roundClip">
+      <rect x="0" y="0" width="512" height="512" rx="90" ry="90"/>
+    </clipPath>
+  </defs>
+  <g clip-path="url(#roundClip)">
+    <rect width="512" height="512" fill="url(#bgGrad)"/>
+    <circle cx="108" cy="130" r="28" fill="white"/>
+    <rect x="80" y="175" width="56" height="165" rx="8" fill="white"/>
+    <circle cx="260" cy="110" r="26" fill="url(#blueGrad)"/>
+    <path d="M220 190 Q220 150 260 145 Q300 150 300 190 L300 260 Q300 280 285 290 L270 300 Q255 310 240 305 L225 295 Q210 285 210 270 Z" fill="url(#blueGrad)"/>
+    <circle cx="350" cy="110" r="26" fill="url(#orangeGrad)"/>
+    <path d="M310 190 Q310 150 350 145 Q390 150 390 190 L390 260 Q390 280 375 290 L360 300 Q345 310 330 305 L315 295 Q300 285 300 270 Z" fill="url(#orangeGrad)"/>
+    <path d="M255 215 C255 195, 245 178, 228 178 C210 178, 198 195, 198 215 C198 245, 255 280, 255 280 Z" fill="url(#heartBlueGrad)"/>
+    <path d="M255 215 C255 195, 265 178, 282 178 C300 178, 312 195, 312 215 C312 245, 255 280, 255 280 Z" fill="url(#heartOrangeGrad)"/>
+    <text x="255" y="248" text-anchor="middle" font-family="monospace" font-size="32" font-weight="bold" fill="white" letter-spacing="-2">&lt;/&gt;</text>
+    <text x="210" y="380" font-family="Arial, Helvetica, sans-serif" font-size="48" font-weight="800" fill="#42A5F5" letter-spacing="3">IT</text>
+    <text x="256" y="380" font-family="Arial, Helvetica, sans-serif" font-size="48" font-weight="800" fill="white" letter-spacing="3">CONNECT</text>
+    <line x1="80" y1="410" x2="175" y2="410" stroke="#FFB74D" stroke-width="2"/>
+    <text x="256" y="418" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="32" font-weight="700" fill="#FFB74D" letter-spacing="8">MATRIMONY</text>
+    <line x1="337" y1="410" x2="432" y2="410" stroke="#FFB74D" stroke-width="2"/>
+  </g>
+</svg>

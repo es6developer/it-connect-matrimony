@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0D1B3E"/>
+      <stop offset="100%" style="stop-color:#1A2744"/>
+    </linearGradient>
+    <linearGradient id="blueGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#2196F3"/>
+      <stop offset="100%" style="stop-color:#0D47A1"/>
+    </linearGradient>
+    <linearGradient id="orangeGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#FFA726"/>
+      <stop offset="100%" style="stop-color:#E65100"/>
+    </linearGradient>
+    <linearGradient id="heartBlueGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#42A5F5"/>
+      <stop offset="100%" style="stop-color:#1565C0"/>
+    </linearGradient>
+    <linearGradient id="heartOrangeGrad" x1="100%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#FFB74D"/>
+      <stop offset="100%" style="stop-color:#EF6C00"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="1024" height="1024" fill="url(#bgGrad)"/>
+
+  <!-- "i" dot -->
+  <circle cx="300" cy="240" r="42" fill="white"/>
+
+  <!-- "i" body -->
+  <rect x="258" y="310" width="84" height="248" rx="12" fill="white"/>
+
+  <!-- Blue person -->
+  <circle cx="520" cy="200" r="40" fill="url(#blueGrad)"/>
+  <path d="M460 310 Q460 250 520 242 Q580 250 580 310 L580 420 Q580 450 560 465 L540 480 Q520 495 500 488 L480 475 Q460 460 460 440 Z" fill="url(#blueGrad)"/>
+
+  <!-- Orange person -->
+  <circle cx="680" cy="200" r="40" fill="url(#orangeGrad)"/>
+  <path d="M620 310 Q620 250 680 242 Q740 250 740 310 L740 420 Q740 450 720 465 L700 480 Q680 495 660 488 L640 475 Q620 460 620 440 Z" fill="url(#orangeGrad)"/>
+
+  <!-- Heart left (blue) -->
+  <path d="M510 340 C510 308, 494 282, 468 282 C440 282, 422 308, 422 340 C422 390, 510 440, 510 440 Z" fill="url(#heartBlueGrad)"/>
+
+  <!-- Heart right (orange) -->
+  <path d="M510 340 C510 308, 526 282, 552 282 C580 282, 598 308, 598 340 C598 390, 510 440, 510 440 Z" fill="url(#heartOrangeGrad)"/>
+
+  <!-- Code </> in heart -->
+  <text x="510" y="385" text-anchor="middle" font-family="monospace" font-size="48" font-weight="bold" fill="white">&lt;/&gt;</text>
+
+  <!-- "IT CONNECT" -->
+  <text x="512" y="600" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="72" font-weight="800" fill="#42A5F5" letter-spacing="4">IT</text>
+  <text x="512" y="600" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="72" font-weight="800" fill="white" letter-spacing="4" dx="120">CONNECT</text>
+
+  <!-- Decorative lines + "MATRIMONY" -->
+  <line x1="160" y1="650" x2="330" y2="650" stroke="#FFB74D" stroke-width="3"/>
+  <text x="512" y="665" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="48" font-weight="700" fill="#FFB74D" letter-spacing="10">MATRIMONY</text>
+  <line x1="694" y1="650" x2="864" y2="650" stroke="#FFB74D" stroke-width="3"/>
+
+  <!-- Tagline -->
+  <text x="512" y="760" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="28" fill="rgba(255,255,255,0.6)" letter-spacing="3">Find Your Perfect Match in Tech</text>
+</svg>

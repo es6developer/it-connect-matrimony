@@ -1,0 +1,45 @@
+{
+  "name": "it-connect-matrimony",
+  "version": "1.0.0",
+  "private": true,
+  "description": "IT Connect Matrimony - Find Your Perfect Match in Tech",
+  "workspaces": [
+    "backend",
+    "web",
+    "admin",
+    "mobile"
+  ],
+  "scripts": {
+    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:web\"",
+    "dev:backend": "cd backend && npm run start:dev",
+    "dev:web": "cd web && npm run dev",
+    "build": "npm run build:backend && npm run build:web",
+    "build:backend": "cd backend && npm run build",
+    "build:web": "cd web && npm run build",
+    "test": "npm run test:backend && npm run test:web",
+    "test:backend": "cd backend && npm test",
+    "test:web": "cd web && npm test",
+    "lint": "npm run lint:backend && npm run lint:web",
+    "lint:backend": "cd backend && npm run lint",
+    "lint:web": "cd web && npm run lint",
+    "format": "prettier --write \"**/*.{ts,tsx,js,json}\"",
+    "migrate": "cd backend && npm run migration:run",
+    "seed": "cd backend && npm run seed",
+    "docker:up": "docker-compose up -d",
+    "docker:down": "docker-compose down",
+    "deploy:dev": "cd infrastructure/terraform && terraform apply -auto-approve -var-file=environments/dev/terraform.tfvars"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2",
+    "prettier": "^3.1.0",
+    "typescript": "^5.3.3"
+  },
+  "dependencies": {
+    "@nestjs/swagger": "^11.4.5",
+    "compression": "^1.8.1",
+    "cookie-parser": "^1.4.7",
+    "helmet": "^8.2.0",
+    "morgan": "^1.11.0",
+    "swagger-ui-express": "^5.0.1"
+  }
+}

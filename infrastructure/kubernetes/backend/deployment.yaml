@@ -1,0 +1,164 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend
+  namespace: it-connect
+  labels:
+    app: backend
+    component: api
+    version: v1
+spec:
+  replicas: 3
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  selector:
+    matchLabels:
+      app: backend
+  template:
+    metadata:
+      labels:
+        app: backend
+        component: api
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "4000"
+        prometheus.io/path: "/api/metrics"
+    spec:
+      serviceAccountName: backend-service-account
+      terminationGracePeriodSeconds: 60
+      containers:
+        - name: backend
+          image: ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/it-connect-backend:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 4000
+              protocol: TCP
+          envFrom:
+            - configMapRef:
+                name: backend-config
+          env:
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: backend-secrets
+                  key: db_password
+            - name: JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: backend-secrets
+                  key: jwt_secret
+            - name: REDIS_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: backend-secrets
+                  key: redis_password
+            - name: RABBITMQ_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: rabbitmq-secrets
+                  key: rabbitmq_password
+            - name: AWS_ACCESS_KEY_ID
+              valueFrom:
+                secretKeyRef:
+                  name: backend-secrets
+                  key: aws_access_key_id
+            - name: AWS_SECRET_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: backend-secrets
+                  key: aws_secret_access_key
+            - name: SMTP_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: backend-secrets
+                  key: smtp_host
+            - name: SMTP_USER
+              valueFrom:
+                secretKeyRef:
+                  name: backend-secrets
+                  key: smtp_user
+            - name: SMTP_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: backend-secrets
+                  key: smtp_pass
+            - name: SENTRY_DSN
+              valueFrom:
+                secretKeyRef:
+                  name: backend-secrets
+                  key: sentry_dsn
+          resources:
+            requests:
+              memory: "512Mi"
+              cpu: "250m"
+            limits:
+              memory: "1Gi"
+              cpu: "500m"
+          livenessProbe:
+            httpGet:
+              path: /api/health
+              port: 4000
+            initialDelaySeconds: 30
+            periodSeconds: 15
+            timeoutSeconds: 5
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /api/health
+              port: 4000
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 3
+            failureThreshold: 2
+          startupProbe:
+            httpGet:
+              path: /api/health
+              port: 4000
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            failureThreshold: 30
+          volumeMounts:
+            - name: uploads
+              mountPath: /app/uploads
+            - name: logs
+              mountPath: /app/logs
+            - name: tmp
+              mountPath: /tmp
+          securityContext:
+            allowPrivilegeEscalation: false
+            runAsNonRoot: true
+            runAsUser: 1000
+            runAsGroup: 1000
+            capabilities:
+              drop: ["ALL"]
+            readOnlyRootFilesystem: false
+      volumes:
+        - name: uploads
+          persistentVolumeClaim:
+            claimName: backend-uploads-pvc
+        - name: logs
+          emptyDir: {}
+        - name: tmp
+          emptyDir: {}
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 100
+              podAffinityTerm:
+                labelSelector:
+                  matchExpressions:
+                    - key: app
+                      operator: In
+                      values:
+                        - backend
+                topologyKey: kubernetes.io/hostname
+      topologySpreadConstraints:
+        - maxSkew: 1
+          topologyKey: topology.kubernetes.io/zone
+          whenUnsatisfiable: DoNotSchedule
+          labelSelector:
+            matchLabels:
+              app: backend

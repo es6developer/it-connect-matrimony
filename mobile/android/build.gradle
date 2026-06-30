@@ -1,0 +1,55 @@
+// Top-level build file where you can add configuration options common to all sub-projects/modules.
+
+buildscript {
+    ext {
+        buildToolsVersion = findProperty('android.buildToolsVersion') ?: '35.0.0'
+        minSdkVersion = Integer.parseInt(findProperty('android.minSdkVersion') ?: '24')
+        compileSdkVersion = Integer.parseInt(findProperty('android.compileSdkVersion') ?: '35')
+        targetSdkVersion = Integer.parseInt(findProperty('android.targetSdkVersion') ?: '34')
+        kotlinVersion = findProperty('android.kotlinVersion') ?: '1.9.25'
+
+        ndkVersion = "27.1.12297006"
+    }
+    repositories {
+        google()
+        mavenCentral()
+    }
+    dependencies {
+        classpath('com.android.tools.build:gradle')
+        classpath('com.facebook.react:react-native-gradle-plugin')
+        classpath('org.jetbrains.kotlin:kotlin-gradle-plugin')
+    }
+}
+
+apply plugin: "com.facebook.react.rootproject"
+
+// Force ALL subprojects to use JDK 17 for Java toolchains. AGP's
+// JdkImageTransform (used during compile*) invokes jlink from the JDK
+// returned by javaCompiler. JDK 21's jlink crashes on Android SDK's
+// core-for-system-modules.jar (malformed ModuleTarget attribute).
+// By pre-setting languageVersion=17, AGP resolves JDK 17 instead of
+// relying on the Gradle daemon's JDK (typically JBR 21 from AS).
+subprojects { subproject ->
+    if (subproject.name == "app") return // handled by app/build.gradle
+    subproject.plugins.withType(JavaBasePlugin) {
+        subproject.extensions.getByType(JavaPluginExtension)
+            .toolchain.languageVersion.set(JavaLanguageVersion.of(17))
+    }
+}
+
+allprojects {
+    repositories {
+        maven {
+            // All of React Native (JS, Obj-C sources, Android binaries) is installed from npm
+            url(new File(['node', '--print', "require.resolve('react-native/package.json')"].execute(null, rootDir).text.trim(), '../android'))
+        }
+        maven {
+            // Android JSC is installed from npm
+            url(new File(['node', '--print', "require.resolve('jsc-android/package.json', { paths: [require.resolve('react-native/package.json')] })"].execute(null, rootDir).text.trim(), '../dist'))
+        }
+
+        google()
+        mavenCentral()
+        maven { url 'https://www.jitpack.io' }
+    }
+}
