@@ -69,7 +69,7 @@ export const useAuth = (): UseAuthReturn => {
     setError(null);
     try {
       const { data } = await api.post<{ user: User } & AuthTokens>(
-        '/auth/verify-otp',
+        '/auth/login/otp/verify',
         payload
       );
       setTokens(data.accessToken, data.refreshToken);
@@ -89,7 +89,7 @@ export const useAuth = (): UseAuthReturn => {
     setIsLoading(true);
     setError(null);
     try {
-      await api.post('/auth/resend-otp', { email });
+      await api.post('/auth/login/otp', { email });
     } catch (err: any) {
       const message =
         err?.response?.data?.message || 'Failed to resend OTP.';
@@ -146,7 +146,7 @@ export const useAuth = (): UseAuthReturn => {
 
   const refreshUser = useCallback(async () => {
     try {
-      const { data } = await api.get<User>('/auth/me');
+      const { data } = await api.get<User>('/users/me');
       setUser(data);
       await AsyncStorage.setItem('user_data', JSON.stringify(data));
     } catch {

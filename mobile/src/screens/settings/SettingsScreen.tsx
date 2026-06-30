@@ -25,7 +25,7 @@ export default function SettingsScreen() {
   const updateSetting = async (key: string, value: boolean, setter: (v: boolean) => void) => {
     setter(value);
     try {
-      await api.put('/api/v1/users/me/settings', { [key]: value });
+      await api.patch('/api/v1/users/me/settings', { [key]: value });
     } catch {
       setter(!value);
       Alert.alert('Error', 'Failed to update setting');
