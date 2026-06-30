@@ -151,7 +151,7 @@ export class UsersService {
 
     if (dto.profile) {
       await this.profileRepository.upsert(
-        { userId: user.id, ...dto.profile },
+        { userId: user.id, ...dto.profile } as any,
         ['userId'],
       );
     }

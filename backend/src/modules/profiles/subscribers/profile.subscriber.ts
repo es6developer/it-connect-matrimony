@@ -1,6 +1,6 @@
 import {
   DataSource, EntitySubscriberInterface, EventSubscriber,
-  UpdateEvent,
+  InsertEvent, UpdateEvent,
 } from 'typeorm';
 import { Inject, Injectable } from '@nestjs/common';
 import { User } from '../../../database/entities/user.entity';
@@ -25,7 +25,7 @@ export class ProfileSubscriber implements EntitySubscriberInterface<Profile> {
     }
   }
 
-  async afterInsert(event: UpdateEvent<Profile>): Promise<void> {
+  async afterInsert(event: InsertEvent<Profile>): Promise<void> {
     if (event.entity) {
       const profile = event.entity as Profile;
       await this.recalculateCompletion(profile.userId);

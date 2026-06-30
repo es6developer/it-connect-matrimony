@@ -10,7 +10,7 @@ import { Subscription } from '../../database/entities/subscription.entity';
 import { Payment } from '../../database/entities/payment.entity';
 import { SubscriptionStatus, PlanType, PaymentGateway } from '../../common/enums';
 
-interface PlanDetail {
+export interface PlanDetail {
   type: PlanType;
   name: string;
   price: number;
