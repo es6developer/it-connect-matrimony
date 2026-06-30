@@ -35,11 +35,5 @@
     "typescript": "^5.3.3"
   },
   "dependencies": {
-    "@nestjs/swagger": "^11.4.5",
-    "compression": "^1.8.1",
-    "cookie-parser": "^1.4.7",
-    "helmet": "^8.2.0",
-    "morgan": "^1.11.0",
-    "swagger-ui-express": "^5.0.1"
   }
 }
