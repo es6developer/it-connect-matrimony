@@ -946,7 +946,7 @@ export default function ProfilePage() {
                   <p className="text-sm font-medium">Hide Profile</p>
                   <p className="text-xs text-muted-foreground">Make your profile invisible</p>
                 </div>
-                <Switch checked={privacySettings.hideProfile} onCheckedChange={(v) => { setPrivacySettings((prev) => ({ ...prev, hideProfile: v })); api.put('/api/v1/users/me/settings', { hideProfile: v }).catch(() => toast.error('Failed to update setting')); }} />
+                <Switch checked={privacySettings.hideProfile} onCheckedChange={(v) => { setPrivacySettings((prev) => ({ ...prev, hideProfile: v })); api.patch('/api/v1/users/me/settings', { hideProfile: v }).catch(() => toast.error('Failed to update setting')); }} />
               </div>
               <Separator />
               <div className="flex items-center justify-between">
@@ -954,7 +954,7 @@ export default function ProfilePage() {
                   <p className="text-sm font-medium">Hide Photos</p>
                   <p className="text-xs text-muted-foreground">Only show photos to accepted interests</p>
                 </div>
-                <Switch checked={privacySettings.hidePhotos} onCheckedChange={(v) => { setPrivacySettings((prev) => ({ ...prev, hidePhotos: v })); api.put('/api/v1/users/me/settings', { hidePhotos: v }).catch(() => toast.error('Failed to update setting')); }} />
+                <Switch checked={privacySettings.hidePhotos} onCheckedChange={(v) => { setPrivacySettings((prev) => ({ ...prev, hidePhotos: v })); api.patch('/api/v1/users/me/settings', { hidePhotos: v }).catch(() => toast.error('Failed to update setting')); }} />
               </div>
               <Separator />
               <div className="flex items-center justify-between">
@@ -962,7 +962,7 @@ export default function ProfilePage() {
                   <p className="text-sm font-medium">Private Mode</p>
                   <p className="text-xs text-muted-foreground">Hide your online status</p>
                 </div>
-                <Switch checked={privacySettings.privateMode} onCheckedChange={(v) => { setPrivacySettings((prev) => ({ ...prev, privateMode: v })); api.put('/api/v1/users/me/settings', { privateMode: v }).catch(() => toast.error('Failed to update setting')); }} />
+                <Switch checked={privacySettings.privateMode} onCheckedChange={(v) => { setPrivacySettings((prev) => ({ ...prev, privateMode: v })); api.patch('/api/v1/users/me/settings', { privateMode: v }).catch(() => toast.error('Failed to update setting')); }} />
               </div>
             </CardContent>
           </Card>

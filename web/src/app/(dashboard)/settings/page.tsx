@@ -182,8 +182,8 @@ export default function SettingsPage() {
                   <Input value={phone} onChange={(e) => setPhone(e.target.value)} type="tel" placeholder="+91 98765 43210" />
                 </div>
               </div>
-              <Button size="sm" onClick={() => { if (email) { api.put('/api/v1/users/me', { email }).then(() => toast.success('Email updated')).catch(() => toast.error('Failed to update email')); } else { toast.error('Please enter an email'); } }}>Update Email</Button>
-              <Button size="sm" className="ml-2" onClick={() => { if (phone) { api.put('/api/v1/users/me', { phone }).then(() => toast.success('Phone updated')).catch(() => toast.error('Failed to update phone')); } else { toast.error('Please enter a phone number'); } }}>Update Phone</Button>
+              <Button size="sm" onClick={() => { if (email) { api.patch('/api/v1/users/me', { email }).then(() => toast.success('Email updated')).catch(() => toast.error('Failed to update email')); } else { toast.error('Please enter an email'); } }}>Update Email</Button>
+              <Button size="sm" className="ml-2" onClick={() => { if (phone) { api.patch('/api/v1/users/me', { phone }).then(() => toast.success('Phone updated')).catch(() => toast.error('Failed to update phone')); } else { toast.error('Please enter a phone number'); } }}>Update Phone</Button>
               <Separator />
               <div>
                 <Label>Change Password</Label>
@@ -237,7 +237,7 @@ export default function SettingsPage() {
                     {twoFAEnabled ? "Enabled" : "Disabled"}
                   </p>
                 </div>
-                <Switch checked={twoFAEnabled} onCheckedChange={(v) => { setTwoFAEnabled(v); api.put('/api/v1/users/me/settings', { twoFactorEnabled: v }).catch(() => { setTwoFAEnabled(!v); toast.error('Failed to update setting'); }); }} />
+                <Switch checked={twoFAEnabled} onCheckedChange={(v) => { setTwoFAEnabled(v); api.patch('/api/v1/users/me/settings', { twoFactorEnabled: v }).catch(() => { setTwoFAEnabled(!v); toast.error('Failed to update setting'); }); }} />
               </div>
             </CardContent>
           </Card>
@@ -394,7 +394,7 @@ export default function SettingsPage() {
                   return (
                     <button
                       key={option.value}
-                      onClick={() => { setTheme(option.value as any); api.put('/api/v1/users/me/settings', { theme: option.value }).catch(() => toast.error('Failed to update theme')); }}
+                      onClick={() => { setTheme(option.value as any); api.patch('/api/v1/users/me/settings', { theme: option.value }).catch(() => toast.error('Failed to update theme')); }}
                       className={`flex flex-col items-center gap-2 p-4 rounded-xl border-2 transition-all ${
                         isActive
                           ? "border-primary bg-primary/5"

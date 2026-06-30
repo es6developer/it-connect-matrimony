@@ -3,6 +3,7 @@ import {
   Logger,
   NotFoundException,
   ConflictException,
+  BadRequestException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, Brackets } from 'typeorm';
@@ -13,6 +14,7 @@ import { Profile } from '../../database/entities/profile.entity';
 import { UserActivity } from '../../database/entities/user-activity.entity';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import * as bcrypt from 'bcrypt';
 import { UserFilterDto } from './dto/user-filter.dto';
 import { PaginationDto } from '../../common/dto/pagination.dto';
 import { UserRole, UserStatus, ActivityType } from '../../common/enums';
@@ -428,6 +430,42 @@ export class UsersService {
       });
     }
 
+    if (settings.theme !== undefined) {
+      await this.userRepository.update(user.id, { theme: settings.theme });
+    }
+
     return this.profileRepository.save(profile);
+  }
+
+  async changePassword(uuid: string, currentPassword: string, newPassword: string): Promise<void> {
+    const user = await this.findByIdOrFail(uuid);
+    const isPasswordValid = await bcrypt.compare(currentPassword, user.passwordHash);
+    if (!isPasswordValid) {
+      throw new BadRequestException({
+        success: false,
+        message: 'Current password is incorrect',
+        error: ERROR_CODES.VALIDATION_ERROR,
+        statusCode: 400,
+      });
+    }
+    const salt = await bcrypt.genSalt(12);
+    user.passwordHash = await bcrypt.hash(newPassword, salt);
+    await this.userRepository.save(user);
+  }
+
+  async getStats(uuid: string) {
+    const user = await this.findByIdOrFail(uuid);
+    const [
+      totalProfileViews,
+      totalInterests,
+      totalMatches,
+      totalMessages,
+    ] = await Promise.all([
+      this.userActivityRepository.count({ where: { userId: user.id, activityType: ActivityType.PROFILE_UPDATE } }),
+      this.userActivityRepository.count({ where: { userId: user.id, activityType: ActivityType.INTEREST_SENT } }),
+      this.userActivityRepository.count({ where: { userId: user.id, activityType: ActivityType.INTEREST_ACCEPTED } }),
+      this.userActivityRepository.count({ where: { userId: user.id, activityType: ActivityType.MESSAGE_SENT } }),
+    ]);
+    return { totalProfileViews, totalInterests, totalMatches, totalMessages };
   }
 }

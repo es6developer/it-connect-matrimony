@@ -1,6 +1,7 @@
 import {
   Controller,
   Get,
+  Post,
   Patch,
   Delete,
   Param,
@@ -10,6 +11,7 @@ import {
   HttpCode,
   HttpStatus,
   NotFoundException,
+  BadRequestException,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -119,6 +121,30 @@ export class UsersController {
       message: 'Settings updated successfully',
       data: result,
     };
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth('access-token')
+  @Post('change-password')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Change password' })
+  @ApiResponse({ status: 200, description: 'Password changed successfully' })
+  async changePassword(
+    @CurrentUser('sub') uuid: string,
+    @Body() dto: { currentPassword: string; newPassword: string },
+  ) {
+    await this.usersService.changePassword(uuid, dto.currentPassword, dto.newPassword);
+    return { success: true, message: 'Password changed successfully' };
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth('access-token')
+  @Get('me/stats')
+  @ApiOperation({ summary: 'Get user dashboard stats' })
+  @ApiResponse({ status: 200, description: 'Stats retrieved successfully' })
+  async getStats(@CurrentUser('sub') uuid: string) {
+    const stats = await this.usersService.getStats(uuid);
+    return { success: true, message: 'Stats retrieved successfully', data: stats };
   }
 
   @UseGuards(JwtAuthGuard)

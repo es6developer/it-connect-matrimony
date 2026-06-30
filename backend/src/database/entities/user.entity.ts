@@ -117,6 +117,9 @@ export class User {
   @Column({ type: 'bigint', unsigned: true, nullable: true })
   referredBy: number | null;
 
+  @Column({ type: 'varchar', length: 20, default: 'system' })
+  theme: string;
+
   @Column({ type: 'varchar', length: 50, nullable: true })
   oauthProvider: OAuthProvider | null;
 

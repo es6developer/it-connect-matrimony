@@ -82,7 +82,7 @@ export default function LoginPage() {
     const email = otpForm.getValues("email");
     const otpValue = otpForm.getValues("otp");
     try {
-      const res = await api.post('/api/v1/auth/verify-otp', { email, otp: otpValue });
+      const res = await api.post('/api/v1/auth/login/otp/verify', { email, otp: otpValue });
       if (res.data) {
         const { user, tokens } = res.data.data;
         useAuthStore.getState().login(user, tokens);
@@ -102,7 +102,7 @@ export default function LoginPage() {
     }
     setIsLoading(true);
     try {
-      await api.post('/api/v1/auth/send-otp', { email });
+      await api.post('/api/v1/auth/login/otp', { email });
       setOtpSent(true);
     } catch {
       // handled by api interceptor toast
