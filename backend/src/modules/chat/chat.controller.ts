@@ -42,7 +42,7 @@ export class ChatController {
     @CurrentUser('id') userId: number,
     @Query() pagination: PaginationDto,
   ) {
-    return this.chatService.getConversations(userId, pagination);
+    return this.chatService.getConversations(String(userId), pagination);
   }
 
   @Post('conversations')
@@ -54,7 +54,7 @@ export class ChatController {
     @CurrentUser('id') userId: number,
     @Body() dto: CreateConversationDto,
   ) {
-    return this.chatService.createConversation(userId, dto.participantId, dto.initialMessage);
+    return this.chatService.createConversation(String(userId), dto.participantId, dto.initialMessage);
   }
 
   @Get('conversations/:id')
@@ -66,7 +66,7 @@ export class ChatController {
     @CurrentUser('id') userId: number,
     @Param('id') id: string,
   ) {
-    return this.chatService.getConversation(id, userId);
+    return this.chatService.getConversation(id, String(userId));
   }
 
   @Get('conversations/:id/messages')
@@ -78,7 +78,7 @@ export class ChatController {
     @Param('id') id: string,
     @Query() pagination: PaginationDto,
   ) {
-    return this.chatService.getMessages(id, userId, pagination);
+    return this.chatService.getMessages(id, String(userId), pagination);
   }
 
   @Delete('conversations/:id')
@@ -89,7 +89,7 @@ export class ChatController {
     @CurrentUser('id') userId: number,
     @Param('id') id: string,
   ) {
-    return this.chatService.deleteConversation(id, userId);
+    return this.chatService.deleteConversation(id, String(userId));
   }
 
   @Post('messages/:id/report')
@@ -101,7 +101,7 @@ export class ChatController {
     @Param('id') id: string,
     @Body() dto: ReportMessageDto,
   ) {
-    return this.chatService.reportMessage(userId, id, dto.reason);
+    return this.chatService.reportMessage(String(userId), id, dto.reason);
   }
 
   @Post('upload')
@@ -118,6 +118,6 @@ export class ChatController {
     @CurrentUser('id') userId: number,
     @UploadedFile() file: Express.Multer.File,
   ) {
-    return this.chatService.uploadFile(file, userId);
+    return this.chatService.uploadFile(file, String(userId));
   }
 }

@@ -216,9 +216,9 @@ export class AnalyticsController {
     const [totalMessages, messagesThisWeek, totalProfileViews, viewsThisWeek, totalSearches] = await Promise.all([
       this.messageRepository.count(),
       this.messageRepository.count({ where: { createdAt: Between(weekAgo, now) } }),
-      this.userActivityRepository.count({ where: { action: 'profile_view' } }),
-      this.userActivityRepository.count({ where: { action: 'profile_view', createdAt: Between(weekAgo, now) } }),
-      this.userActivityRepository.count({ where: { action: 'search' } }),
+      this.userActivityRepository.count({ where: { activityType: 'profile_view' as any } }),
+      this.userActivityRepository.count({ where: { activityType: 'profile_view' as any, createdAt: Between(weekAgo, now) } }),
+      this.userActivityRepository.count({ where: { activityType: 'search_performed' as any } }),
     ]);
 
     return {

@@ -873,7 +873,7 @@ export class AuthService {
   }
 
   private async sendVerificationEmail(user: User) {
-    const payload: JwtPayload = { sub: user.uuid, email: user.email, role: user.role };
+    const payload: JwtPayload = { sub: user.uuid, id: user.id, email: user.email, role: user.role };
     const token = await this.jwtService.signAsync(payload, {
       secret: this.configService.get<string>('jwt.secret'),
       expiresIn: '24h',

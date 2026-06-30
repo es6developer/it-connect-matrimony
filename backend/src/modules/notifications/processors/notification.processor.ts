@@ -86,7 +86,7 @@ export class EmailProcessor extends WorkerHost {
   async process(job: Job<NotificationJobData>): Promise<any> {
     this.logger.log(`Processing email job ${job.id}: ${job.data.title}`);
 
-    const { recipientEmail, subject, body, templateId, templateData, data } = job.data;
+    const { recipientEmail, body, templateId, templateData, data } = job.data;
 
     if (!recipientEmail) {
       this.logger.warn(`Email job ${job.id} has no recipient email`);

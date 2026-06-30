@@ -78,7 +78,7 @@ export class DashboardService {
       this.getTotalRevenue(),
       this.verificationRepository.count({ where: { status: 'pending' } }),
       this.reportRepository.count({ where: { status: 'pending' } }),
-      this.ticketRepository.count({ where: { status: 'open' } }),
+      this.ticketRepository.count({ where: { status: 'open' as any } }),
       this.userRepository.find({
         order: { createdAt: 'DESC' },
         take: 10,

@@ -76,7 +76,7 @@ export class VerificationsController {
   @ApiResponse({ status: 200, description: 'Verification details retrieved' })
   async getVerification(@Param('id') id: string) {
     const verification = await this.verificationRepository.findOne({
-      where: { uuid: id },
+      where: { id: Number(id) },
       relations: ['user', 'verifiedByUser'],
     });
 
@@ -105,7 +105,7 @@ export class VerificationsController {
     @Body() dto: ApproveVerificationDto,
     @CurrentUser() admin: JwtPayload,
   ) {
-    const verification = await this.verificationRepository.findOne({ where: { uuid: id } });
+    const verification = await this.verificationRepository.findOne({ where: { id: Number(id) } });
 
     if (!verification) {
       throw new NotFoundException({
@@ -142,7 +142,7 @@ export class VerificationsController {
     @Body() dto: RejectVerificationDto,
     @CurrentUser() admin: JwtPayload,
   ) {
-    const verification = await this.verificationRepository.findOne({ where: { uuid: id } });
+    const verification = await this.verificationRepository.findOne({ where: { id: Number(id) } });
 
     if (!verification) {
       throw new NotFoundException({

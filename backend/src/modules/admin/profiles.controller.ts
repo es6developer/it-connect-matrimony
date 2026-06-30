@@ -77,7 +77,8 @@ export class ProfilesController {
   @ApiOperation({ summary: 'List profiles pending moderation' })
   @ApiResponse({ status: 200, description: 'Pending profiles retrieved' })
   async listPendingProfiles(@Query() query: AdminProfilesQueryDto) {
-    return this.listProfiles({ ...query, search: undefined });
+    query.search = undefined;
+    return this.listProfiles(query);
   }
 
   @Patch(':id/hide')
@@ -85,7 +86,7 @@ export class ProfilesController {
   @ApiOperation({ summary: 'Hide/unhide a profile' })
   @ApiResponse({ status: 200, description: 'Profile visibility updated' })
   async toggleHideProfile(@Param('id') id: string, @Body('hidden') hidden: boolean) {
-    const profile = await this.profileRepository.findOne({ where: { uuid: id } });
+    const profile = await this.profileRepository.findOne({ where: { id: Number(id) } });
     if (!profile) {
       throw new NotFoundException({
         success: false,
